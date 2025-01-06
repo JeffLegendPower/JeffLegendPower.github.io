@@ -23,18 +23,47 @@
     <div class="post-title">
         <a class="post-title-name">dsu</a>
     </div>
-    <pre class="code-color">vector&lt;<span class=g>int</span>&gt; <span class=b>root</span>(MAXN, <span class=y>-</span><span class=y>1</span>);<br>
-<span class=r>// find root of node i</span>
-<span class=g>int</span> <span class=b>find</span>(<span class=g>int</span> i){
-    <span class=y>if</span>(root<span class=b>[</span>i<span class=b>]</span> &lt; <span class=y>0</span>) <span class=y>return</span> i;
-    <span class=y>return</span> root<span class=b>[</span>i<span class=b>]</span> = <span class=b>find</span>(root<span class=b>[</span>i<span class=b>]</span>);
-}<br>
-<span class=r>// merge nodes a, b</span>
-<span class=g>void</span> <span class=b>merge</span>(<span class=g>int</span> a, <span class=g>int</span> b){
-    <span class=y>if</span>((a = <span class=b>find</span>(a)) == (b = <span class=b>find</span>(b))) <span class=y>return</span>;
-    <span class=y>if</span>(root<span class=b>[</span>a<span class=b>]</span> &lt; root<span class=b>[</span>b<span class=b>]</span>) root<span class=b>[</span>a<span class=b>]</span> += root<span class=b>[</span>b<span class=b>]</span>, root<span class=b>[</span>b<span class=b>]</span> = a;
-    <span class=y>else</span> root<span class=b>[</span>b<span class=b>]</span> += root<span class=b>[</span>a<span class=b>]</span>, root<span class=b>[</span>a<span class=b>]</span> = b;
-}</pre>
+    <pre class="code-color">class DSU {
+  public:
+    vector&lt;<span class=g>int</span>&gt; parents;
+    vector&lt;<span class=g>int</span>&gt; sizes;
+    DSU(<span class=g>int</span> size) : <span class=b>parents</span>(size), <span class=b>sizes</span>(size, <span class=y>1</span>) {
+        <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; size; i++) { parents<span class=b>[</span>i<span class=b>]</span> = i; }
+    }<br>
+<span class=r>    /** @return the "representative" node in x's component */</span>
+    <span class=g>int</span> <span class=b>find</span>(<span class=g>int</span> x) { <span class=y>return</span> parents<span class=b>[</span>x<span class=b>]</span> == x ? x : (parents<span class=b>[</span>x<span class=b>]</span> = <span class=b>find</span>(parents<span class=b>[</span>x<span class=b>]</span>)); }<br>
+<span class=r>    /** @return whether the merge changed connectivity */</span>
+    <span class=g>bool</span> <span class=b>unite</span>(<span class=g>int</span> x, <span class=g>int</span> y) {
+        <span class=g>int</span> x_root = <span class=b>find</span>(x);
+        <span class=g>int</span> y_root = <span class=b>find</span>(y);
+        <span class=y>if</span> (x_root == y_root) { <span class=y>return</span> <span class=y>false</span>; }<br>
+        <span class=y>if</span> (sizes<span class=b>[</span>x_root<span class=b>]</span> &lt; sizes<span class=b>[</span>y_root<span class=b>]</span>) { <span class=b>swap</span>(x_root, y_root); }
+        sizes<span class=b>[</span>x_root<span class=b>]</span> += sizes<span class=b>[</span>y_root<span class=b>]</span>;
+        parents<span class=b>[</span>y_root<span class=b>]</span> = x_root;
+        <span class=y>return</span> <span class=y>true</span>;
+    }<br>
+<span class=r>    /** @return whether x and y are in the same connected component */</span>
+    <span class=g>bool</span> <span class=b>connected</span>(<span class=g>int</span> x, <span class=g>int</span> y) { <span class=y>return</span> <span class=b>find</span>(x) == <span class=b>find</span>(y); }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
+        <a class="post-title-name">cht</a>
+    </div>
+    <pre class="code-color"><span class=r>// Can replace with any other function as long as any f[i] intersects with any other f[j] at most once</span>
+<span class=g>struct</span> <span class=b>line</span> {
+    ll a, b;<br>
+    ll <span class=b>calc</span>(ll x) { <span class=y>return</span> a*x + b; }
+    ld <span class=b>intersect</span>(line two) { <span class=y>return</span> (ld) (two.b - b) / (a - two.a); };
+};<br>
+deque&lt;line&gt; hull;
+vector&lt;<span class=g>int</span>&gt; <span class=b>ints</span>(MAXN + <span class=y>1</span>);
+<span class=r>// iota(ints.begin(), ints.end(), 0);</span><br>
+<span class=r>// Find which f to use for some value of x</span>
+<span class=g>auto</span> cmp = <span class=b>[</span>&amp;hull<span class=b>]</span>(<span class=g>int</span> idx, ll x) { <span class=y>return</span> hull<span class=b>[</span>idx<span class=b>]</span>.<span class=b>intersect</span>(hull<span class=b>[</span>idx + <span class=y>1</span><span class=b>]</span>) &lt; x; };
+<span class=r>// int idx = *lower_bound(ints.begin(), ints.begin() + hull.size() - 1, x, cmp);</span></pre>
 </div></div>
 <div class="post-spacer"></div>
 
@@ -44,30 +73,25 @@
     </div>
     <pre class="code-color"><span class=g>int</span> jmp<span class=b>[</span><span class=y>20</span><span class=b>]</span><span class=b>[</span>MAXN<span class=b>]</span>, dep<span class=b>[</span>MAXN<span class=b>]</span>;<br>
 <span class=r>// add child to parent</span>
-<span class=g>void</span> <span class=b>addchild</span>(<span class=g>int</span> parent, <span class=g>int</span> child){
-    jmp<span class=b>[</span><span class=y>0</span><span class=b>]</span><span class=b>[</span>child<span class=b>]</span> = parent;
-    dep<span class=b>[</span>child<span class=b>]</span> = dep<span class=b>[</span>parent<span class=b>]</span>+<span class=y>1</span>;
+<span class=g>void</span> <span class=b>addchild</span>(<span class=g>int</span> p, <span class=g>int</span> v) {
+    jmp<span class=b>[</span><span class=y>0</span><span class=b>]</span><span class=b>[</span>v<span class=b>]</span> = p;
+    dep<span class=b>[</span>v<span class=b>]</span> = dep<span class=b>[</span>p<span class=b>]</span> + <span class=y>1</span>;
 }<br>
 <span class=r>// prepare jumps</span>
-<span class=g>void</span> <span class=b>build</span>(){
-    <span class=y>for</span>(<span class=g>int</span> i=<span class=y>0</span>; i&lt;<span class=y>20</span>; ++i)
-        <span class=y>for</span>(<span class=g>int</span> j=<span class=y>0</span>; j&lt;MAXN; ++j)
-            jmp<span class=b>[</span>i<span class=b>]</span><span class=b>[</span>j<span class=b>]</span> = jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>j<span class=b>]</span><span class=b>]</span>;
+<span class=g>void</span> <span class=b>build</span>() {
+    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; <span class=y>20</span>; i++) <span class=y>for</span>(<span class=g>int</span> j = <span class=y>0</span>; j &lt; MAXN; j++) jmp<span class=b>[</span>i<span class=b>]</span><span class=b>[</span>j<span class=b>]</span> = jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>j<span class=b>]</span><span class=b>]</span>;
 }<br>
 <span class=r>// kth ancestor of i</span>
-<span class=g>int</span> <span class=b>kth</span>(<span class=g>int</span> i, <span class=g>int</span> k){
-    <span class=y>for</span>(<span class=g>int</span> x=<span class=y>19</span>; x&gt;=<span class=y>0</span>; --x)
-        <span class=y>if</span>(k &amp; (<span class=y>1</span>&lt;&lt;x)) i = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>i<span class=b>]</span>;
+<span class=g>int</span> <span class=b>kth</span>(<span class=g>int</span> i, <span class=g>int</span> k) {
+    <span class=y>for</span>(<span class=g>int</span> x = <span class=y>19</span>; x &gt;= <span class=y>0</span>; x--) <span class=y>if</span> (k &amp; (<span class=y>1</span>&lt;&lt;x)) i = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>i<span class=b>]</span>;
     <span class=y>return</span> i;
 }<br>
 <span class=r>// LCA of a, b</span>
-<span class=g>int</span> <span class=b>lca</span>(<span class=g>int</span> a, <span class=g>int</span> b){
-    <span class=y>if</span>(dep<span class=b>[</span>a<span class=b>]</span> &lt; dep<span class=b>[</span>b<span class=b>]</span>) std::<span class=b>swap</span>(a, b);
+<span class=g>int</span> <span class=b>lca</span>(<span class=g>int</span> a, <span class=g>int</span> b) {
+    <span class=y>if</span>(dep<span class=b>[</span>a<span class=b>]</span> &lt; dep<span class=b>[</span>b<span class=b>]</span>) <span class=b>swap</span>(a, b);
     a = <span class=b>kth</span>(a, dep<span class=b>[</span>a<span class=b>]</span> - dep<span class=b>[</span>b<span class=b>]</span>);
     <span class=y>if</span>(a == b) <span class=y>return</span> a;
-    <span class=y>for</span>(<span class=g>int</span> x=<span class=y>19</span>; x&gt;=<span class=y>0</span>; --x)
-        <span class=y>if</span>(jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>a<span class=b>]</span> != jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>b<span class=b>]</span>)
-            a = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>a<span class=b>]</span>, b = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>b<span class=b>]</span>;
+    <span class=y>for</span>(<span class=g>int</span> x = <span class=y>19</span>; x &gt;= <span class=y>0</span>; x--) <span class=y>if</span>(jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>a<span class=b>]</span> != jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>b<span class=b>]</span>) a = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>a<span class=b>]</span>, b = jmp<span class=b>[</span>x<span class=b>]</span><span class=b>[</span>b<span class=b>]</span>;
     <span class=y>return</span> jmp<span class=b>[</span><span class=y>0</span><span class=b>]</span><span class=b>[</span>a<span class=b>]</span>;
 }</pre>
 </div></div>
