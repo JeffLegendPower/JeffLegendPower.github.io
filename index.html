@@ -21,6 +21,39 @@
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">segtree</a>
+    </div>
+    <pre class="code-color">class Segtree {
+private:
+    <span class=g>int</span> N;  // array size
+    vector&lt;ll&gt; t;<br>
+    ll <span class=b>oper</span>(ll a, ll b) {
+        <span class=y>return</span> a + b;
+    }<br>
+public:
+    Segtree(<span class=g>int</span> size) : N(size), <span class=b>t</span>(<span class=y>2</span> * size, 0ll) {}<br>
+    <span class=g>void</span> <span class=b>build</span>() {  // Build the tree
+        <span class=y>for</span> (<span class=g>int</span> i = N - <span class=y>1</span>; i &gt; <span class=y>0</span>; i--) 
+            t<span class=b>[</span>i<span class=b>]</span> = <span class=b>oper</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>);
+    }<br>
+    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> p, ll value) {  // Set value at position p
+        <span class=y>for</span> (t<span class=b>[</span>p += N<span class=b>]</span> = value; p &gt; <span class=y>1</span>; p &gt;&gt;= <span class=y>1</span>) 
+            t<span class=b>[</span>p &gt;&gt; <span class=y>1</span><span class=b>]</span> = <span class=b>oper</span>(t<span class=b>[</span>p<span class=b>]</span>, t<span class=b>[</span>p^1<span class=b>]</span>);
+    }<br>
+    ll <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {  // Query on interval <span class=b>[</span>l, r)
+        ll res = <span class=y>0</span>;
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>oper</span>(res, t<span class=b>[</span>l++<span class=b>]</span>);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>oper</span>(res, t<span class=b>[</span>--r<span class=b>]</span>);
+        }
+        <span class=y>return</span> res;
+    }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">dsu</a>
     </div>
     <pre class="code-color">class DSU {
