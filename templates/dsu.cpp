@@ -1,14 +1,26 @@
-vector<int> root(MAXN, -1);
+class DSU {
+  public:
+	vector<int> parents;
+	vector<int> sizes;
+	DSU(int size) : parents(size), sizes(size, 1) {
+		for (int i = 0; i < size; i++) { parents[i] = i; }
+	}
 
-// find root of node i
-int find(int i){
-	if(root[i] < 0) return i;
-	return root[i] = find(root[i]);
-}
+	/** @return the "representative" node in x's component */
+	int find(int x) { return parents[x] == x ? x : (parents[x] = find(parents[x])); }
 
-// merge nodes a, b
-void merge(int a, int b){
-	if((a = find(a)) == (b = find(b))) return;
-	if(root[a] < root[b]) root[a] += root[b], root[b] = a;
-	else root[b] += root[a], root[a] = b;
-}
+	/** @return whether the merge changed connectivity */
+	bool unite(int x, int y) {
+		int x_root = find(x);
+		int y_root = find(y);
+		if (x_root == y_root) { return false; }
+
+		if (sizes[x_root] < sizes[y_root]) { swap(x_root, y_root); }
+		sizes[x_root] += sizes[y_root];
+		parents[y_root] = x_root;
+		return true;
+	}
+
+	/** @return whether x and y are in the same connected component */
+	bool connected(int x, int y) { return find(x) == find(y); }
+};
