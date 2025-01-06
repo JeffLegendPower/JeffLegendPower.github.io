@@ -1,0 +1,338 @@
+:root {
+	--background-color: #151515;
+	--foreground-color: #202020;
+	--highlight-color: #404040;
+
+	--content-color: #A0B0C0;
+	--header-color: #A0A0C0;
+	--code-color: #A0C0A0;
+	--link-color: #A0C0B0;
+	--bold-color: #D0A070;
+}
+
+/* force overflow to post-outer only */
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+/* global font */
+body {
+	background-color: var(--background-color);
+
+	font-family: "Noto Sans Mono", monospace;
+	font-weight: <weight>;
+	font-style: normal;
+	font-size: 14px;
+
+	scroll-padding-top: constant(safe-area-inset-top);
+	scroll-padding-top: env(safe-area-inset-top);
+}
+
+/* main content, centered, does not exceed specified width */
+div#flex-stack {
+	flex-direction: column;
+	vertical-align: middle;
+	display: flex;
+
+	max-width: 900px;
+	height: 100%;
+	margin: auto;
+}
+
+/* floating title bar */
+div#title-outer {
+	padding: 20px;
+}
+
+div#title-inner {
+	background-color: var(--foreground-color);
+	text-align: center;
+	padding: 3px;
+}
+
+/* title is a hyperlink but inherits style of h2 */
+div#title-inner > a {
+	display: block;
+
+	color: var(--header-color);
+	margin-bottom: 0.83em;
+	margin-top: 0.83em;
+	font-weight: bold;
+	font-size: 1.5em;
+}
+
+/* contain overflow entirely within posts-outer */
+div#posts-outer {
+	position: relative;
+	overflow-y: auto;
+}
+
+/* custom scrollbars */
+@-moz-document url-prefix() {
+	div#posts-outer {
+		scrollbar-color: var(--highlight-color) var(--background-color);
+	}
+}
+
+div#posts-outer::-webkit-scrollbar {
+	background-color: var(--background-color);
+	width: 3px;
+}
+
+div#posts-outer::-webkit-scrollbar-track {
+	background-color: var(--background-color);
+}
+
+div#posts-outer::-webkit-scrollbar-thumb {
+	background-color: var(--highlight-color);
+}
+
+/* padding & etc */
+div#posts-inner {
+	padding-bottom: 20px;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+div.post-spacer {
+	height: 10px;
+}
+
+div.post {
+	background-color: var(--foreground-color);
+	padding: 3px;
+}
+
+div.content {
+	color: var(--content-color);
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+/* horizontal flexbox title - name & timestamp */
+div.post-title {
+	flex-direction: row;
+	display: flex;
+}
+
+a.post-title-name {
+	color: var(--header-color);
+	text-decoration: none;
+	font-weight: bold;
+	font-size: 1.17em;
+
+	margin-bottom: 5px;
+	margin-top: 1em;
+}
+
+div.post-title-date {
+	margin-bottom: auto;
+	text-align: right;
+	margin-right: 0px;
+	margin-left: auto;
+	margin-top: 10px;
+	font-size: 12px;
+	width: auto;
+}
+
+/* globally color links */
+a {
+	text-decoration: none;
+	color: var(--link-color);
+}
+
+a:link:hover {
+	text-decoration: underline;
+}
+
+a.readmore {
+	text-decoration: none;
+	font-size: 12px;
+}
+
+a.readmore:hover {
+	text-decoration: none;
+}
+
+p.tag-container {
+	font-size: 12px;
+}
+
+div#starship {
+	position: fixed;
+	z-index: 100;
+	bottom: 10px;
+	left: 0px;
+
+	align-items: center;
+	display: flex;
+	height: 19px;
+
+	background: #303030;
+	font-size: 13px;
+	color: #D0A070;
+	
+	font-family: "Noto Sans Mono", monospace;
+	font-variation-settings: "wdth" 100;
+	font-optical-sizing: auto;
+	font-weight: <weight>;
+	font-style: normal;
+	font-size: 14px;
+
+	padding-bottom: 4px;
+	padding-right: 4px;
+	padding-left: 6px;
+	padding-top: 4px;
+
+	transform: translateX(calc(-100% + 26px));
+	transition: 1s;
+}
+
+div#starship:hover {
+	transform: translateX(10px);
+}
+
+div#grabber {
+	display: inline-block;
+	margin-left: 8px;
+	width: 18px;
+}
+
+/* various other colors & styles */
+b {
+	color: var(--bold-color);
+}
+
+h1, h2, h3, h4, h5 {
+	color: var(--header-color);
+}
+
+hr {
+	border-top: 1px solid var(--highlight-color);
+	border-color: var(--highlight-color);
+	color: var(--highlight-color);
+}
+
+ul {
+	list-style: "- ";
+	padding-left: 20px;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+
+	margin-right: auto;
+	margin-left: auto;
+
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+
+video {
+	display: block;
+	max-width: 100%;
+
+	margin-right: auto;
+	margin-left: auto;
+
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+
+div.oldposts {
+	margin: 0 auto;
+	text-align: center;
+}
+
+pre.code {
+	background-color: var(--background-color);
+	color: var(--code-color);
+	white-space: pre-wrap;
+	padding: 10px;
+
+	font-family: "Noto Sans Mono", monospace;
+	font-weight: <weight>;
+	font-style: normal;
+	font-size: 14px;
+}
+
+/* code color classes */
+
+pre.code-color {
+	background-color: var(--background-color);
+	color: #B0B0B0;
+	white-space: pre-wrap;
+	padding: 10px;
+
+	font-family: "Noto Sans Mono", monospace;
+	font-weight: <weight>;
+	font-style: normal;
+	font-size: 14px;
+}
+
+pre.code-color > span.g {
+	color: #90B090;
+}
+
+pre.code-color > span.b {
+	color: #90B0C0;
+}
+
+pre.code-color > span.y {
+	color: #C09060;
+}
+
+pre.code-color > span.r {
+	color: #707070;
+}
+
+/* quote blocks */
+
+p.quote {
+	background-color: #151515;
+	width: fit-content;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 15px;
+}
+
+p.quote-nocenter {
+	background-color: #151515;
+	width: fit-content;
+	padding: 15px;
+}
+
+pre.quote {
+	background-color: #151515;
+	width: fit-content;
+	padding: 15px;
+}
+
+/* encryption */
+
+p.protection-notice {
+	background-color: #151515;
+	width: fit-content;
+	font-size: 12px;
+	padding: 10px;
+}
+
+div.protected-content {
+    overflow-wrap: break-word;
+	word-wrap: break-word;
+    white-space: normal;
+	font-style: italic;
+	color: gray;
+}
+
+div.unprotected-content {
+	color: #C08570;
+}
