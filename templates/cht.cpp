@@ -10,5 +10,6 @@ deque<line> hull;
 vector<int> ints(MAXN+1);
 // iota(ints.begin(), ints.end(), 0);
 
+// Find which f to use for some value of x
 auto cmp = [&hull](int idx, ll x) { return hull[idx].intersect(hull[idx + 1]) < x; };
 // int idx = *lower_bound(ints.begin(), ints.begin() + hull.size() - 1, x, cmp);
