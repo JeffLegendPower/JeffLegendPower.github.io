@@ -7,7 +7,7 @@ struct line {
 };
 
 deque<line> hull;
-vector<int> ints(MAXN+1);
+vector<int> ints(MAXN + 1);
 // iota(ints.begin(), ints.end(), 0);
 
 // Find which f to use for some value of x
