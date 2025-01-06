@@ -17,6 +17,16 @@ jobs:
         uses: actions/setup-python@v5 
         with:
           python-version: '3.10'
-      
+
       - name: Run Python script
         run: python format.py
+
+      # Optional: Commit the changes back to the repo if the script generates new files
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add index.html
+          git commit -m "Update index.html via GitHub Actions" || echo "No changes to commit"
+          git push
+        if: success() # Only run if the script succeeds
