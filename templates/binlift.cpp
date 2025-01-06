@@ -1,23 +1,27 @@
 int jmp[20][MAXN], dep[MAXN];
 
-void addchild(int parent, int child){ // add child to parent
+// add child to parent
+void addchild(int parent, int child){
 	jmp[0][child] = parent;
 	dep[child] = dep[parent]+1;
 }
 
-void build(){ // prepare jumps
+// prepare jumps
+void build(){
 	for(int i=0; i<20; ++i)
 		for(int j=0; j<MAXN; ++j)
 			jmp[i][j] = jmp[i-1][jmp[i-1][j]];
 }
 
-int kth(int i, int k){ // kth ancestor of i
+// kth ancestor of i
+int kth(int i, int k){
 	for(int x=19; x>=0; --x)
 		if(k & (1<<x)) i = jmp[x][i];
 	return i;
 }
 
-int lca(int a, int b){ // LCA of a, b
+// LCA of a, b
+int lca(int a, int b){
 	if(dep[a] < dep[b]) std::swap(a, b);
 	a = kth(a, dep[a] - dep[b]);
 	if(a == b) return a;
