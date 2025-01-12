@@ -1,8 +1,10 @@
-const int MOBIUSMAX = 1e5 + 1;
 ll mobius[MOBIUSMAX];
 
 void calcmobius() {
     mobius[1] = -1;
+    mobius[0] = 0;
+    for (int i = 2; i < MOBIUSMAX; i++) mobius[i] = 0;
+
     for (int i = 1; i < MOBIUSMAX; i++) {
         if (mobius[i]) {
             mobius[i] = -mobius[i];
