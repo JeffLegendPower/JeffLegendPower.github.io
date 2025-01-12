@@ -83,6 +83,24 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">mobius</a>
+    </div>
+    <pre class="code-color"><span class=g>const</span> <span class=g>int</span> MOBIUSMAX = <span class=y>1e5</span> + <span class=y>1</span>;
+ll mobius<span class=b>[</span>MOBIUSMAX<span class=b>]</span>;<br>
+<span class=g>void</span> <span class=b>calcmobius</span>() {
+    mobius<span class=b>[</span><span class=y>1</span><span class=b>]</span> = <span class=y>-</span><span class=y>1</span>;
+    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>1</span>; i &lt; MOBIUSMAX; i++) {
+        <span class=y>if</span> (mobius<span class=b>[</span>i<span class=b>]</span>) {
+            mobius<span class=b>[</span>i<span class=b>]</span> = -mobius<span class=b>[</span>i<span class=b>]</span>;
+            <span class=y>for</span> (<span class=g>int</span> j = <span class=y>2</span> * i; j &lt; MOBIUSMAX; j += i) { mobius<span class=b>[</span>j<span class=b>]</span> += mobius<span class=b>[</span>i<span class=b>]</span>; }
+        }
+    }
+}</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">cht</a>
     </div>
     <pre class="code-color"><span class=r>// Can replace with any other function as long as any f[i] intersects with any other f[j] at most once</span>
