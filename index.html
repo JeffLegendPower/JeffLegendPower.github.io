@@ -72,6 +72,17 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">modinv</a>
+    </div>
+    <pre class="code-color"><span class=r>// REQUIRES binpow</span>
+ll <span class=b>modinv</span>(ll x, ll MOD) {
+    <span class=y>return</span> <span class=b>binpow</span>(x, MOD - <span class=y>2</span>, MOD);
+}</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">dsu</a>
     </div>
     <pre class="code-color">class DSU {
