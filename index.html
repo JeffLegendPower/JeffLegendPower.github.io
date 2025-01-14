@@ -54,6 +54,24 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">binpow</a>
+    </div>
+    <pre class="code-color">ll <span class=b>binpow</span>(ll a, ll b, ll MOD) {
+    a %= MOD;
+    ll res = <span class=y>1</span>;
+    <span class=y>while</span> (b &gt; <span class=y>0</span>) {
+        <span class=y>if</span> (b &amp; <span class=y>1</span>)
+            res = res * a % MOD;
+        a = a * a % MOD;
+        b &gt;&gt;= <span class=y>1</span>;
+    }
+    <span class=y>return</span> res;
+}</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">dsu</a>
     </div>
     <pre class="code-color">class DSU {
