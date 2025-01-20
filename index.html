@@ -160,7 +160,7 @@ vector&lt;<span class=g>int</span>&gt; <span class=b>ints</span>(MAXN + <span cl
 }<br>
 <span class=r>// prepare jumps</span>
 <span class=g>void</span> <span class=b>build</span>() {
-    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; <span class=y>20</span>; i++) <span class=y>for</span>(<span class=g>int</span> j = <span class=y>0</span>; j &lt; MAXN; j++) jmp<span class=b>[</span>i<span class=b>]</span><span class=b>[</span>j<span class=b>]</span> = jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>j<span class=b>]</span><span class=b>]</span>;
+    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>1</span>; i &lt; <span class=y>20</span>; i++) <span class=y>for</span>(<span class=g>int</span> j = <span class=y>0</span>; j &lt; MAXN; j++) jmp<span class=b>[</span>i<span class=b>]</span><span class=b>[</span>j<span class=b>]</span> = jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>jmp<span class=b>[</span>i<span class=y>-</span><span class=y>1</span><span class=b>]</span><span class=b>[</span>j<span class=b>]</span><span class=b>]</span>;
 }<br>
 <span class=r>// kth ancestor of i</span>
 <span class=g>int</span> <span class=b>kth</span>(<span class=g>int</span> i, <span class=g>int</span> k) {
