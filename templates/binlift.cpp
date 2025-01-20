@@ -8,7 +8,7 @@ void addchild(int p, int v) {
 
 // prepare jumps
 void build() {
-	for (int i = 0; i < 20; i++) for(int j = 0; j < MAXN; j++) jmp[i][j] = jmp[i-1][jmp[i-1][j]];
+	for (int i = 1; i < 20; i++) for(int j = 0; j < MAXN; j++) jmp[i][j] = jmp[i-1][jmp[i-1][j]];
 }
 
 // kth ancestor of i
