@@ -21,6 +21,70 @@
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">heavylight</a>
+    </div>
+    <pre class="code-color">template &lt;class T, <span class=g>int</span> V&gt;
+class HeavyLight {
+    <span class=g>int</span> parent<span class=b>[</span>V<span class=b>]</span>, heavy<span class=b>[</span>V<span class=b>]</span>, depth<span class=b>[</span>V<span class=b>]</span>;
+    <span class=g>int</span> root<span class=b>[</span>V<span class=b>]</span>, treePos<span class=b>[</span>V<span class=b>]</span>;
+    Segtree&lt;T&gt; tree;<br>
+    template &lt;class G&gt;
+    <span class=g>int</span> <span class=b>dfs</span>(<span class=g>const</span> G&amp; graph, <span class=g>int</span> v) {
+        <span class=g>int</span> size = <span class=y>1</span>, maxSubtree = <span class=y>0</span>;
+        <span class=y>for</span> (<span class=g>int</span> u : graph<span class=b>[</span>v<span class=b>]</span>) <span class=y>if</span> (u != parent<span class=b>[</span>v<span class=b>]</span>) {
+            parent<span class=b>[</span>u<span class=b>]</span> = v;
+            depth<span class=b>[</span>u<span class=b>]</span> = depth<span class=b>[</span>v<span class=b>]</span> + <span class=y>1</span>;
+            <span class=g>int</span> subtree = <span class=b>dfs</span>(graph, u);
+            <span class=y>if</span> (subtree &gt; maxSubtree) heavy<span class=b>[</span>v<span class=b>]</span> = u, maxSubtree = subtree;
+            size += subtree;
+        }
+        <span class=y>return</span> size;
+    }<br>
+    template &lt;class BinaryOperation&gt;
+    <span class=g>void</span> processPath(<span class=g>int</span> u, <span class=g>int</span> v, BinaryOperation op) {
+        <span class=y>for</span> (; root<span class=b>[</span>u<span class=b>]</span> != root<span class=b>[</span>v<span class=b>]</span>; v = parent<span class=b>[</span>root<span class=b>[</span>v<span class=b>]</span><span class=b>]</span>) {
+            <span class=y>if</span> (depth<span class=b>[</span>root<span class=b>[</span>u<span class=b>]</span><span class=b>]</span> &gt; depth<span class=b>[</span>root<span class=b>[</span>v<span class=b>]</span><span class=b>]</span>) <span class=b>swap</span>(u, v);
+            <span class=b>op</span>(treePos<span class=b>[</span>root<span class=b>[</span>v<span class=b>]</span><span class=b>]</span>, treePos<span class=b>[</span>v<span class=b>]</span> + <span class=y>1</span>);
+        }
+        <span class=y>if</span> (depth<span class=b>[</span>u<span class=b>]</span> &gt; depth<span class=b>[</span>v<span class=b>]</span>) <span class=b>swap</span>(u, v); <span class=b>op</span>(treePos<span class=b>[</span>u<span class=b>]</span>, treePos<span class=b>[</span>v<span class=b>]</span> + <span class=y>1</span>);
+    }<br>
+public:
+    template &lt;class G&gt;
+<span class=r>    // Pass in adjacency list vector&lt;vector&lt;int&gt;&gt;</span>
+    HeavyLight(<span class=g>const</span> G&amp; graph) : <span class=b>tree</span>(graph.<span class=b>size</span>()) {
+        <span class=g>int</span> n = graph.<span class=b>size</span>();
+        <span class=b>fill_n</span>(heavy, n, <span class=y>-</span><span class=y>1</span>);
+        parent<span class=b>[</span><span class=y>0</span><span class=b>]</span> = <span class=y>-</span><span class=y>1</span>;
+        depth<span class=b>[</span><span class=y>0</span><span class=b>]</span> = <span class=y>0</span>;
+        <span class=b>dfs</span>(graph, <span class=y>0</span>);
+        <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>, currentPos = <span class=y>0</span>; i &lt; n; ++i)
+            <span class=y>if</span> (parent<span class=b>[</span>i<span class=b>]</span> == <span class=y>-</span><span class=y>1</span> || heavy<span class=b>[</span>parent<span class=b>[</span>i<span class=b>]</span><span class=b>]</span> != i)
+                <span class=y>for</span> (<span class=g>int</span> j = i; j != <span class=y>-</span><span class=y>1</span>; j = heavy<span class=b>[</span>j<span class=b>]</span>) {
+                    root<span class=b>[</span>j<span class=b>]</span> = i;
+                    treePos<span class=b>[</span>j<span class=b>]</span> = currentPos++;
+                }
+        }<br>
+    <span class=g>void</span> <span class=b>set</span>(<span class=g>int</span> v, <span class=g>const</span> T&amp; value) {
+        tree.<span class=b>modify</span>(treePos<span class=b>[</span>v<span class=b>]</span>, value);
+    }<br>
+<span class=r>    // Need lazy segtree for this one</span>
+    <span class=g>void</span> modifyPath(<span class=g>int</span> u, <span class=g>int</span> v, <span class=g>const</span> T&amp; value) {
+        processPath(u, v, <span class=b>[</span>this, &amp;value<span class=b>]</span>(<span class=g>int</span> l, <span class=g>int</span> r) { tree.<span class=b>modify</span>(l, r, value); });
+    }<br>
+    T queryPath(<span class=g>int</span> u, <span class=g>int</span> v) {
+        T res = T();
+        processPath(u, v, <span class=b>[</span>this, &amp;res<span class=b>]</span>(<span class=g>int</span> l, <span class=g>int</span> r) { 
+<span class=r>            // Combine</span>
+            res = <span class=b>combine</span>(res, tree.<span class=b>query</span>(l, r));
+        });
+        <span class=y>return</span> res;
+    }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">segtree</a>
     </div>
     <pre class="code-color">template &lt;class T&gt;
