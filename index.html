@@ -119,6 +119,74 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">lazysegtree</a>
+    </div>
+    <pre class="code-color">template &lt;class T, class K&gt;
+class LazySegtree {
+private:
+    <span class=g>int</span> N;  // array size
+    <span class=g>int</span> h;
+    vector&lt;T&gt; t;
+    vector&lt;K&gt; d;<br>
+    T <span class=b>combine</span>(T a, T b) {
+        <span class=y>return</span> a + b;
+    }<br>
+<span class=r>    // k is the length of the segment</span>
+    T <span class=b>calc</span>(T a, T b, K d, <span class=g>int</span> k) {
+        <span class=y>return</span> <span class=b>max</span>(a, b) + d;
+    }<br>
+<span class=r>    // Update d[p]</span>
+<span class=r>    // k is the length of segment</span>
+    <span class=g>void</span> <span class=b>apply</span>(<span class=g>int</span> p, K value, <span class=g>int</span> k) {
+<span class=r>        // Update t[p] as if it was already affected by d[p]</span>
+        t<span class=b>[</span>p<span class=b>]</span> += value;
+        <span class=y>if</span> (p &lt; N) d<span class=b>[</span>p<span class=b>]</span> += value;
+    }<br>
+public:
+    LazySegtree(<span class=g>int</span> size) : N(size), <span class=b>h</span>(<span class=b>sizeof</span>(<span class=g>int</span>) * <span class=y>8</span> - <span class=b>__builtin_clz</span>(N)), <span class=b>t</span>(<span class=y>2</span> * size, T()), <span class=b>d</span>(size) {}<br>
+    <span class=g>void</span> <span class=b>build</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=g>int</span> k = <span class=y>2</span>;
+        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; l &gt; <span class=y>1</span>; k &lt;&lt;= <span class=y>1</span>) {
+            l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>;
+            <span class=y>for</span> (<span class=g>int</span> i = r; i &gt;= l; --i) t<span class=b>[</span>i<span class=b>]</span> = <span class=b>calc</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
+        }
+    }<br>
+    <span class=g>void</span> <span class=b>push</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=g>int</span> s = h, k = <span class=y>1</span> &lt;&lt; (h<span class=y>-</span><span class=y>1</span>);
+        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; s &gt; <span class=y>0</span>; --s, k &gt;&gt;= <span class=y>1</span>) <span class=y>for</span> (<span class=g>int</span> i = l &gt;&gt; s; i &lt;= r &gt;&gt; s; ++i) <span class=y>if</span> (d<span class=b>[</span>i<span class=b>]</span> != <span class=y>0</span>) {
+            <span class=b>apply</span>(i&lt;&lt;<span class=y>1</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
+            <span class=b>apply</span>(i&lt;&lt;1|1, d<span class=b>[</span>i<span class=b>]</span>, k);
+            d<span class=b>[</span>i<span class=b>]</span> = <span class=y>0</span>;
+        }
+    }<br>
+    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> l, <span class=g>int</span> r, T value) {
+        <span class=y>if</span> (value == <span class=y>0</span>) <span class=y>return</span>;
+        <span class=b>push</span>(l, l + <span class=y>1</span>);
+        <span class=b>push</span>(r - <span class=y>1</span>, r);
+        <span class=g>int</span> l0 = l, r0 = r, k = <span class=y>1</span>;
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>, k &lt;&lt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) <span class=b>apply</span>(l++, value, k);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) <span class=b>apply</span>(--r, value, k);
+        }
+        <span class=b>build</span>(l0, l0 + <span class=y>1</span>);
+        <span class=b>build</span>(r0 - <span class=y>1</span>, r0);
+    }<br>
+    T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=b>push</span>(l, l + <span class=y>1</span>);
+        <span class=b>push</span>(r - <span class=y>1</span>, r);
+        T res = <span class=y>0</span>;
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>l++<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>--r<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
+        }
+        <span class=y>return</span> res;
+    }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">binpow</a>
     </div>
     <pre class="code-color">ll <span class=b>binpow</span>(ll a, ll b, ll MOD) {
