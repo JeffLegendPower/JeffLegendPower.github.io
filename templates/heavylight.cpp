@@ -1,7 +1,7 @@
 template <class T, int V>
 class HeavyLight {
     int parent[V], heavy[V], depth[V];
-    int root[V], treePos[V];
+    int root[V], treePos[V], subtree[V];
     Segtree<T> tree;
 
     template <class G>
@@ -14,7 +14,15 @@ class HeavyLight {
             if (subtree > maxSubtree) heavy[v] = u, maxSubtree = subtree;
             size += subtree;
         }
+        subtree[v] = size;
         return size;
+    }
+
+    template <class G>
+    void dfs2(const G& graph, int v, int& i) {
+        treePos[v] = i++;
+        if (heavy[v] != -1) dfs2(graph, heavy[v], i);
+        for (int u : graph[v]) if (u != parent[v] && u != heavy[v]) dfs2(graph, u, i);
     }
 
     template <class BinaryOperation>
@@ -37,10 +45,11 @@ public:
         dfs(graph, 0);
         for (int i = 0, currentPos = 0; i < n; ++i)
             if (parent[i] == -1 || heavy[parent[i]] != i)
-                for (int j = i; j != -1; j = heavy[j]) {
+                for (int j = i; j != -1; j = heavy[j])
                     root[j] = i;
-                    treePos[j] = currentPos++;
-                }
+        
+        int k = 0;
+        dfs2(graph, 0, k);
         }
 
     void set(int v, const T& value) {
@@ -59,5 +68,13 @@ public:
             res = combine(res, tree.query(l, r));
         });
         return res;
+    }
+
+    void modifySubtree(int v, const T& value) {
+        tree.modify(treePos[v], treePos[v] + subtree[v], value);
+    }
+
+    void querySubtree(int v, const T& value) {
+        return tree.query(treePos[v], treePos[v] + subtree[v]);
     }
 };
