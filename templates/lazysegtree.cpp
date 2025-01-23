@@ -43,7 +43,7 @@ public:
         }
     }
 
-    void modify(int l, int r, T value) {
+    void modify(int l, int r, K value) {
         if (value == 0) return;
         push(l, l + 1);
         push(r - 1, r);
