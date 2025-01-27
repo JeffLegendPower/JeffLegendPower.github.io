@@ -258,6 +258,33 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">2dbit</a>
+    </div>
+    <pre class="code-color">template &lt;class T, <span class=g>int</span>... Ns&gt; <span class=g>struct</span> <span class=b>BIT</span> {
+    T val = <span class=y>0</span>;
+    <span class=g>void</span> <span class=b>upd</span>(T v) { val += v; }
+    T <span class=b>query</span>() { <span class=y>return</span> val; }
+};<br>
+template &lt;class T, <span class=g>int</span> N, <span class=g>int</span>... Ns&gt; <span class=g>struct</span> <span class=b>BIT</span>&lt;T, N, Ns...&gt; {
+    BIT&lt;T, Ns...&gt; bit<span class=b>[</span>N + <span class=y>1</span><span class=b>]</span>;
+    template &lt;typename... Args&gt; <span class=g>void</span> <span class=b>upd</span>(<span class=g>int</span> pos, Args... args) {
+        <span class=y>for</span> (; pos &lt;= N; pos += (pos &amp; -pos)) bit<span class=b>[</span>pos<span class=b>]</span>.<span class=b>upd</span>(args...);
+    }
+    template &lt;typename... Args&gt; T <span class=b>sum</span>(<span class=g>int</span> r, Args... args) {
+        T res = <span class=y>0</span>;
+        <span class=y>for</span> (; r; r -= (r &amp; -r)) res += bit<span class=b>[</span>r<span class=b>]</span>.<span class=b>query</span>(args...);
+        <span class=y>return</span> res;
+    }
+    template &lt;typename... Args&gt; T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r, Args... args) {
+        <span class=y>return</span> <span class=b>sum</span>(r, args...) - <span class=b>sum</span>(l - <span class=y>1</span>, args...);
+    }
+};
+<span class=r>// Do like BIT&lt;int, 1024, 1024&gt; bit;</span></pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">lazysegtree</a>
     </div>
     <pre class="code-color">template &lt;class T, class K&gt;
