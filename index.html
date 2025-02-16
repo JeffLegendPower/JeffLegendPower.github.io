@@ -51,6 +51,167 @@
 
 <div class="post"><div class="content">
     <div class="post-title">
+        <a class="post-title-name">modinv</a>
+    </div>
+    <pre class="code-color"><span class=r>// REQUIRES binpow</span>
+ll <span class=b>modinv</span>(ll x, ll MOD) {
+    <span class=y>return</span> <span class=b>binpow</span>(x, MOD - <span class=y>2</span>, MOD);
+}</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
+        <a class="post-title-name">dsu</a>
+    </div>
+    <pre class="code-color">class DSU {
+  public:
+    vector&lt;<span class=g>int</span>&gt; parents;
+    vector&lt;<span class=g>int</span>&gt; sizes;
+    DSU(<span class=g>int</span> size) : <span class=b>parents</span>(size), <span class=b>sizes</span>(size, <span class=y>1</span>) {
+        <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; size; i++) { parents<span class=b>[</span>i<span class=b>]</span> = i; }
+    }<br>
+<span class=r>    /** @return the "representative" node in x's component */</span>
+    <span class=g>int</span> <span class=b>find</span>(<span class=g>int</span> x) { <span class=y>return</span> parents<span class=b>[</span>x<span class=b>]</span> == x ? x : (parents<span class=b>[</span>x<span class=b>]</span> = <span class=b>find</span>(parents<span class=b>[</span>x<span class=b>]</span>)); }<br>
+<span class=r>    /** @return whether the merge changed connectivity */</span>
+    <span class=g>bool</span> <span class=b>unite</span>(<span class=g>int</span> x, <span class=g>int</span> y) {
+        <span class=g>int</span> x_root = <span class=b>find</span>(x);
+        <span class=g>int</span> y_root = <span class=b>find</span>(y);
+        <span class=y>if</span> (x_root == y_root) { <span class=y>return</span> <span class=y>false</span>; }<br>
+        <span class=y>if</span> (sizes<span class=b>[</span>x_root<span class=b>]</span> &lt; sizes<span class=b>[</span>y_root<span class=b>]</span>) { <span class=b>swap</span>(x_root, y_root); }
+        sizes<span class=b>[</span>x_root<span class=b>]</span> += sizes<span class=b>[</span>y_root<span class=b>]</span>;
+        parents<span class=b>[</span>y_root<span class=b>]</span> = x_root;
+        <span class=y>return</span> <span class=y>true</span>;
+    }<br>
+<span class=r>    /** @return whether x and y are in the same connected component */</span>
+    <span class=g>bool</span> <span class=b>connected</span>(<span class=g>int</span> x, <span class=g>int</span> y) { <span class=y>return</span> <span class=b>find</span>(x) == <span class=b>find</span>(y); }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
+        <a class="post-title-name">segtree</a>
+    </div>
+    <pre class="code-color">template &lt;class T&gt;
+class Segtree {
+private:
+    <span class=g>int</span> N;  // array size
+    vector&lt;T&gt; t;<br>
+    T <span class=b>combine</span>(T a, T b) {
+        <span class=y>return</span> a + b;
+    }<br>
+public:
+    Segtree(<span class=g>int</span> size) : N(size), <span class=b>t</span>(<span class=y>2</span> * size, T()) {}<br>
+    <span class=g>void</span> <span class=b>build</span>() {  // Build the tree
+        <span class=y>for</span> (<span class=g>int</span> i = N - <span class=y>1</span>; i &gt; <span class=y>0</span>; i--) 
+            t<span class=b>[</span>i<span class=b>]</span> = <span class=b>combine</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>);
+    }<br>
+    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> p, T value) {  // Set value at position p
+        <span class=y>for</span> (t<span class=b>[</span>p += N<span class=b>]</span> = value; p &gt; <span class=y>1</span>; p &gt;&gt;= <span class=y>1</span>) 
+            t<span class=b>[</span>p &gt;&gt; <span class=y>1</span><span class=b>]</span> = <span class=b>combine</span>(t<span class=b>[</span>p<span class=b>]</span>, t<span class=b>[</span>p^1<span class=b>]</span>);
+    }<br>
+    T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {  // Query on interval <span class=b>[</span>l, r)
+        T res = T();
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>combine</span>(res, t<span class=b>[</span>l++<span class=b>]</span>);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>combine</span>(res, t<span class=b>[</span>--r<span class=b>]</span>);
+        }
+        <span class=y>return</span> res;
+    }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
+        <a class="post-title-name">lazysegtree</a>
+    </div>
+    <pre class="code-color">template &lt;class T, class K&gt;
+class LazySegtree {
+private:
+    <span class=g>int</span> N;  // array size
+    <span class=g>int</span> h;
+    vector&lt;T&gt; t;
+    vector&lt;K&gt; d;<br>
+    T <span class=b>combine</span>(T a, T b) {
+        <span class=y>return</span> a + b;
+    }<br>
+<span class=r>    // k is the length of the segment</span>
+    T <span class=b>calc</span>(T a, T b, K d, <span class=g>int</span> k) {
+        <span class=y>return</span> <span class=b>max</span>(a, b) + d;
+    }<br>
+<span class=r>    // Update d[p]</span>
+<span class=r>    // k is the length of segment</span>
+    <span class=g>void</span> <span class=b>apply</span>(<span class=g>int</span> p, K value, <span class=g>int</span> k) {
+<span class=r>        // Update t[p] as if it was already affected by d[p]</span>
+        t<span class=b>[</span>p<span class=b>]</span> += value;
+        <span class=y>if</span> (p &lt; N) d<span class=b>[</span>p<span class=b>]</span> += value;
+    }<br>
+public:
+    LazySegtree(<span class=g>int</span> size) : N(size), <span class=b>h</span>(<span class=b>sizeof</span>(<span class=g>int</span>) * <span class=y>8</span> - <span class=b>__builtin_clz</span>(N)), <span class=b>t</span>(<span class=y>2</span> * size, T()), <span class=b>d</span>(size) {}<br>
+    <span class=g>void</span> <span class=b>build</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=g>int</span> k = <span class=y>2</span>;
+        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; l &gt; <span class=y>1</span>; k &lt;&lt;= <span class=y>1</span>) {
+            l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>;
+            <span class=y>for</span> (<span class=g>int</span> i = r; i &gt;= l; --i) t<span class=b>[</span>i<span class=b>]</span> = <span class=b>calc</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
+        }
+    }<br>
+    <span class=g>void</span> <span class=b>push</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=g>int</span> s = h, k = <span class=y>1</span> &lt;&lt; (h<span class=y>-</span><span class=y>1</span>);
+        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; s &gt; <span class=y>0</span>; --s, k &gt;&gt;= <span class=y>1</span>) <span class=y>for</span> (<span class=g>int</span> i = l &gt;&gt; s; i &lt;= r &gt;&gt; s; ++i) <span class=y>if</span> (d<span class=b>[</span>i<span class=b>]</span> != <span class=y>0</span>) {
+            <span class=b>apply</span>(i&lt;&lt;<span class=y>1</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
+            <span class=b>apply</span>(i&lt;&lt;1|1, d<span class=b>[</span>i<span class=b>]</span>, k);
+            d<span class=b>[</span>i<span class=b>]</span> = <span class=y>0</span>;
+        }
+    }<br>
+    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> l, <span class=g>int</span> r, K value) {
+        <span class=y>if</span> (value == <span class=y>0</span>) <span class=y>return</span>;
+        <span class=b>push</span>(l, l + <span class=y>1</span>);
+        <span class=b>push</span>(r - <span class=y>1</span>, r);
+        <span class=g>int</span> l0 = l, r0 = r, k = <span class=y>1</span>;
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>, k &lt;&lt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) <span class=b>apply</span>(l++, value, k);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) <span class=b>apply</span>(--r, value, k);
+        }
+        <span class=b>build</span>(l0, l0 + <span class=y>1</span>);
+        <span class=b>build</span>(r0 - <span class=y>1</span>, r0);
+    }<br>
+    T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
+        <span class=b>push</span>(l, l + <span class=y>1</span>);
+        <span class=b>push</span>(r - <span class=y>1</span>, r);
+        T res = <span class=y>0</span>;
+        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
+            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>l++<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
+            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>--r<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
+        }
+        <span class=y>return</span> res;
+    }
+};</pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
+        <a class="post-title-name">cht</a>
+    </div>
+    <pre class="code-color"><span class=r>// Can replace with any other function as long as any f[i] intersects with any other f[j] at most once</span>
+<span class=g>struct</span> <span class=b>line</span> {
+    ll a, b;<br>
+    ll <span class=b>calc</span>(ll x) { <span class=y>return</span> a*x + b; }
+    ld <span class=b>intersect</span>(line two) { <span class=y>return</span> (ld) (two.b - b) / (a - two.a); };
+};<br>
+deque&lt;line&gt; hull;
+vector&lt;<span class=g>int</span>&gt; <span class=b>ints</span>(MAXN + <span class=y>1</span>);
+<span class=r>// iota(ints.begin(), ints.end(), 0);</span><br>
+<span class=r>// Find which f to use for some value of x</span>
+<span class=g>auto</span> cmp = <span class=b>[</span>&amp;hull<span class=b>]</span>(<span class=g>int</span> idx, ll x) { <span class=y>return</span> hull<span class=b>[</span>idx<span class=b>]</span>.<span class=b>intersect</span>(hull<span class=b>[</span>idx + <span class=y>1</span><span class=b>]</span>) &lt; x; };
+<span class=r>// int idx = *lower_bound(ints.begin(), ints.begin() + hull.size() - 1, x, cmp);</span></pre>
+</div></div>
+<div class="post-spacer"></div>
+
+<div class="post"><div class="content">
+    <div class="post-title">
         <a class="post-title-name">heavylight</a>
     </div>
     <pre class="code-color">template &lt;class T, <span class=g>int</span> V&gt;
@@ -128,113 +289,35 @@ public:
 
 <div class="post"><div class="content">
     <div class="post-title">
-        <a class="post-title-name">mobius</a>
+        <a class="post-title-name">kuhn_maxbipartitematching</a>
     </div>
-    <pre class="code-color">ll mobius<span class=b>[</span>MOBIUSMAX<span class=b>]</span>;<br>
-<span class=g>void</span> <span class=b>calcmobius</span>() {
-    mobius<span class=b>[</span><span class=y>1</span><span class=b>]</span> = <span class=y>-</span><span class=y>1</span>;
-    mobius<span class=b>[</span><span class=y>0</span><span class=b>]</span> = <span class=y>0</span>;
-    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>2</span>; i &lt; MOBIUSMAX; i++) mobius<span class=b>[</span>i<span class=b>]</span> = <span class=y>0</span>;<br>
-    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>1</span>; i &lt; MOBIUSMAX; i++) {
-        <span class=y>if</span> (mobius<span class=b>[</span>i<span class=b>]</span>) {
-            mobius<span class=b>[</span>i<span class=b>]</span> = -mobius<span class=b>[</span>i<span class=b>]</span>;
-            <span class=y>for</span> (<span class=g>int</span> j = <span class=y>2</span> * i; j &lt; MOBIUSMAX; j += i) { mobius<span class=b>[</span>j<span class=b>]</span> += mobius<span class=b>[</span>i<span class=b>]</span>; }
+    <pre class="code-color"><span class=r>// https://cp-algorithms.com/graph/kuhn_maximum_bipartite_matching.html#implementation</span>
+<span class=r>// only has edges from one side of bipartite graph to other</span>
+vector&lt;vector&lt;<span class=g>int</span>&gt;&gt; kuhngraph;
+<span class=r>// the matching vertex for each vertex on the other side of the graph</span>
+<span class=r>// if matching vertex won't be -1</span>
+vector&lt;<span class=g>int</span>&gt; mt;
+<span class=r>// only for side 1</span>
+vector&lt;<span class=g>bool</span>&gt; used;<br>
+<span class=g>bool</span> <span class=b>try_kuhn</span>(<span class=g>int</span> v) {
+    <span class=y>if</span> (used<span class=b>[</span>v<span class=b>]</span>)
+        <span class=y>return</span> <span class=y>false</span>;
+    used<span class=b>[</span>v<span class=b>]</span> = <span class=y>true</span>;
+    <span class=y>for</span> (<span class=g>int</span> to : g<span class=b>[</span>v<span class=b>]</span>) {
+        <span class=y>if</span> (mt<span class=b>[</span>to<span class=b>]</span> == <span class=y>-</span><span class=y>1</span> || <span class=b>try_kuhn</span>(mt<span class=b>[</span>to<span class=b>]</span>)) {
+            mt<span class=b>[</span>to<span class=b>]</span> = v;
+            <span class=y>return</span> <span class=y>true</span>;
         }
     }
-}</pre>
-</div></div>
-<div class="post-spacer"></div>
-
-<div class="post"><div class="content">
-    <div class="post-title">
-        <a class="post-title-name">modinv</a>
-    </div>
-    <pre class="code-color"><span class=r>// REQUIRES binpow</span>
-ll <span class=b>modinv</span>(ll x, ll MOD) {
-    <span class=y>return</span> <span class=b>binpow</span>(x, MOD - <span class=y>2</span>, MOD);
-}</pre>
-</div></div>
-<div class="post-spacer"></div>
-
-<div class="post"><div class="content">
-    <div class="post-title">
-        <a class="post-title-name">dsu</a>
-    </div>
-    <pre class="code-color">class DSU {
-  public:
-    vector&lt;<span class=g>int</span>&gt; parents;
-    vector&lt;<span class=g>int</span>&gt; sizes;
-    DSU(<span class=g>int</span> size) : <span class=b>parents</span>(size), <span class=b>sizes</span>(size, <span class=y>1</span>) {
-        <span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; size; i++) { parents<span class=b>[</span>i<span class=b>]</span> = i; }
-    }<br>
-<span class=r>    /** @return the "representative" node in x's component */</span>
-    <span class=g>int</span> <span class=b>find</span>(<span class=g>int</span> x) { <span class=y>return</span> parents<span class=b>[</span>x<span class=b>]</span> == x ? x : (parents<span class=b>[</span>x<span class=b>]</span> = <span class=b>find</span>(parents<span class=b>[</span>x<span class=b>]</span>)); }<br>
-<span class=r>    /** @return whether the merge changed connectivity */</span>
-    <span class=g>bool</span> <span class=b>unite</span>(<span class=g>int</span> x, <span class=g>int</span> y) {
-        <span class=g>int</span> x_root = <span class=b>find</span>(x);
-        <span class=g>int</span> y_root = <span class=b>find</span>(y);
-        <span class=y>if</span> (x_root == y_root) { <span class=y>return</span> <span class=y>false</span>; }<br>
-        <span class=y>if</span> (sizes<span class=b>[</span>x_root<span class=b>]</span> &lt; sizes<span class=b>[</span>y_root<span class=b>]</span>) { <span class=b>swap</span>(x_root, y_root); }
-        sizes<span class=b>[</span>x_root<span class=b>]</span> += sizes<span class=b>[</span>y_root<span class=b>]</span>;
-        parents<span class=b>[</span>y_root<span class=b>]</span> = x_root;
-        <span class=y>return</span> <span class=y>true</span>;
-    }<br>
-<span class=r>    /** @return whether x and y are in the same connected component */</span>
-    <span class=g>bool</span> <span class=b>connected</span>(<span class=g>int</span> x, <span class=g>int</span> y) { <span class=y>return</span> <span class=b>find</span>(x) == <span class=b>find</span>(y); }
-};</pre>
-</div></div>
-<div class="post-spacer"></div>
-
-<div class="post"><div class="content">
-    <div class="post-title">
-        <a class="post-title-name">cht</a>
-    </div>
-    <pre class="code-color"><span class=r>// Can replace with any other function as long as any f[i] intersects with any other f[j] at most once</span>
-<span class=g>struct</span> <span class=b>line</span> {
-    ll a, b;<br>
-    ll <span class=b>calc</span>(ll x) { <span class=y>return</span> a*x + b; }
-    ld <span class=b>intersect</span>(line two) { <span class=y>return</span> (ld) (two.b - b) / (a - two.a); };
-};<br>
-deque&lt;line&gt; hull;
-vector&lt;<span class=g>int</span>&gt; <span class=b>ints</span>(MAXN + <span class=y>1</span>);
-<span class=r>// iota(ints.begin(), ints.end(), 0);</span><br>
-<span class=r>// Find which f to use for some value of x</span>
-<span class=g>auto</span> cmp = <span class=b>[</span>&amp;hull<span class=b>]</span>(<span class=g>int</span> idx, ll x) { <span class=y>return</span> hull<span class=b>[</span>idx<span class=b>]</span>.<span class=b>intersect</span>(hull<span class=b>[</span>idx + <span class=y>1</span><span class=b>]</span>) &lt; x; };
-<span class=r>// int idx = *lower_bound(ints.begin(), ints.begin() + hull.size() - 1, x, cmp);</span></pre>
-</div></div>
-<div class="post-spacer"></div>
-
-<div class="post"><div class="content">
-    <div class="post-title">
-        <a class="post-title-name">segtree</a>
-    </div>
-    <pre class="code-color">template &lt;class T&gt;
-class Segtree {
-private:
-    <span class=g>int</span> N;  // array size
-    vector&lt;T&gt; t;<br>
-    T <span class=b>combine</span>(T a, T b) {
-        <span class=y>return</span> a + b;
-    }<br>
-public:
-    Segtree(<span class=g>int</span> size) : N(size), <span class=b>t</span>(<span class=y>2</span> * size, T()) {}<br>
-    <span class=g>void</span> <span class=b>build</span>() {  // Build the tree
-        <span class=y>for</span> (<span class=g>int</span> i = N - <span class=y>1</span>; i &gt; <span class=y>0</span>; i--) 
-            t<span class=b>[</span>i<span class=b>]</span> = <span class=b>combine</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>);
-    }<br>
-    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> p, T value) {  // Set value at position p
-        <span class=y>for</span> (t<span class=b>[</span>p += N<span class=b>]</span> = value; p &gt; <span class=y>1</span>; p &gt;&gt;= <span class=y>1</span>) 
-            t<span class=b>[</span>p &gt;&gt; <span class=y>1</span><span class=b>]</span> = <span class=b>combine</span>(t<span class=b>[</span>p<span class=b>]</span>, t<span class=b>[</span>p^1<span class=b>]</span>);
-    }<br>
-    T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {  // Query on interval <span class=b>[</span>l, r)
-        T res = T();
-        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
-            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>combine</span>(res, t<span class=b>[</span>l++<span class=b>]</span>);
-            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>combine</span>(res, t<span class=b>[</span>--r<span class=b>]</span>);
-        }
-        <span class=y>return</span> res;
-    }
-};</pre>
+    <span class=y>return</span> <span class=y>false</span>;
+}<br>
+<span class=r>// if N vertices on left side and M on right side</span>
+mt.<span class=b>assign</span>(M, <span class=y>-</span><span class=y>1</span>);
+<span class=y>for</span> (<span class=g>int</span> v = <span class=y>0</span>; v &lt; N; v++) {
+    used.<span class=b>assign</span>(N, <span class=y>false</span>);
+    <span class=b>try_kuhn</span>(v);
+}<br>
+<span class=y>for</span> (<span class=g>int</span> i = <span class=y>0</span>; i &lt; M; i++) <span class=y>if</span> (mt<span class=b>[</span>i<span class=b>]</span> != <span class=y>-</span><span class=y>1</span>) {/* i on right side matches with mt<span class=b>[</span>i<span class=b>]</span> on left side */}</pre>
 </div></div>
 <div class="post-spacer"></div>
 
@@ -285,69 +368,20 @@ template &lt;class T, <span class=g>int</span> N, <span class=g>int</span>... Ns
 
 <div class="post"><div class="content">
     <div class="post-title">
-        <a class="post-title-name">lazysegtree</a>
+        <a class="post-title-name">mobius</a>
     </div>
-    <pre class="code-color">template &lt;class T, class K&gt;
-class LazySegtree {
-private:
-    <span class=g>int</span> N;  // array size
-    <span class=g>int</span> h;
-    vector&lt;T&gt; t;
-    vector&lt;K&gt; d;<br>
-    T <span class=b>combine</span>(T a, T b) {
-        <span class=y>return</span> a + b;
-    }<br>
-<span class=r>    // k is the length of the segment</span>
-    T <span class=b>calc</span>(T a, T b, K d, <span class=g>int</span> k) {
-        <span class=y>return</span> <span class=b>max</span>(a, b) + d;
-    }<br>
-<span class=r>    // Update d[p]</span>
-<span class=r>    // k is the length of segment</span>
-    <span class=g>void</span> <span class=b>apply</span>(<span class=g>int</span> p, K value, <span class=g>int</span> k) {
-<span class=r>        // Update t[p] as if it was already affected by d[p]</span>
-        t<span class=b>[</span>p<span class=b>]</span> += value;
-        <span class=y>if</span> (p &lt; N) d<span class=b>[</span>p<span class=b>]</span> += value;
-    }<br>
-public:
-    LazySegtree(<span class=g>int</span> size) : N(size), <span class=b>h</span>(<span class=b>sizeof</span>(<span class=g>int</span>) * <span class=y>8</span> - <span class=b>__builtin_clz</span>(N)), <span class=b>t</span>(<span class=y>2</span> * size, T()), <span class=b>d</span>(size) {}<br>
-    <span class=g>void</span> <span class=b>build</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
-        <span class=g>int</span> k = <span class=y>2</span>;
-        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; l &gt; <span class=y>1</span>; k &lt;&lt;= <span class=y>1</span>) {
-            l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>;
-            <span class=y>for</span> (<span class=g>int</span> i = r; i &gt;= l; --i) t<span class=b>[</span>i<span class=b>]</span> = <span class=b>calc</span>(t<span class=b>[</span>i&lt;&lt;<span class=y>1</span><span class=b>]</span>, t<span class=b>[</span>i&lt;&lt;1|1<span class=b>]</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
+    <pre class="code-color">ll mobius<span class=b>[</span>MOBIUSMAX<span class=b>]</span>;<br>
+<span class=g>void</span> <span class=b>calcmobius</span>() {
+    mobius<span class=b>[</span><span class=y>1</span><span class=b>]</span> = <span class=y>-</span><span class=y>1</span>;
+    mobius<span class=b>[</span><span class=y>0</span><span class=b>]</span> = <span class=y>0</span>;
+    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>2</span>; i &lt; MOBIUSMAX; i++) mobius<span class=b>[</span>i<span class=b>]</span> = <span class=y>0</span>;<br>
+    <span class=y>for</span> (<span class=g>int</span> i = <span class=y>1</span>; i &lt; MOBIUSMAX; i++) {
+        <span class=y>if</span> (mobius<span class=b>[</span>i<span class=b>]</span>) {
+            mobius<span class=b>[</span>i<span class=b>]</span> = -mobius<span class=b>[</span>i<span class=b>]</span>;
+            <span class=y>for</span> (<span class=g>int</span> j = <span class=y>2</span> * i; j &lt; MOBIUSMAX; j += i) { mobius<span class=b>[</span>j<span class=b>]</span> += mobius<span class=b>[</span>i<span class=b>]</span>; }
         }
-    }<br>
-    <span class=g>void</span> <span class=b>push</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
-        <span class=g>int</span> s = h, k = <span class=y>1</span> &lt;&lt; (h<span class=y>-</span><span class=y>1</span>);
-        <span class=y>for</span> (l += N, r += N<span class=y>-</span><span class=y>1</span>; s &gt; <span class=y>0</span>; --s, k &gt;&gt;= <span class=y>1</span>) <span class=y>for</span> (<span class=g>int</span> i = l &gt;&gt; s; i &lt;= r &gt;&gt; s; ++i) <span class=y>if</span> (d<span class=b>[</span>i<span class=b>]</span> != <span class=y>0</span>) {
-            <span class=b>apply</span>(i&lt;&lt;<span class=y>1</span>, d<span class=b>[</span>i<span class=b>]</span>, k);
-            <span class=b>apply</span>(i&lt;&lt;1|1, d<span class=b>[</span>i<span class=b>]</span>, k);
-            d<span class=b>[</span>i<span class=b>]</span> = <span class=y>0</span>;
-        }
-    }<br>
-    <span class=g>void</span> <span class=b>modify</span>(<span class=g>int</span> l, <span class=g>int</span> r, K value) {
-        <span class=y>if</span> (value == <span class=y>0</span>) <span class=y>return</span>;
-        <span class=b>push</span>(l, l + <span class=y>1</span>);
-        <span class=b>push</span>(r - <span class=y>1</span>, r);
-        <span class=g>int</span> l0 = l, r0 = r, k = <span class=y>1</span>;
-        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>, k &lt;&lt;= <span class=y>1</span>) {
-            <span class=y>if</span> (l&amp;<span class=y>1</span>) <span class=b>apply</span>(l++, value, k);
-            <span class=y>if</span> (r&amp;<span class=y>1</span>) <span class=b>apply</span>(--r, value, k);
-        }
-        <span class=b>build</span>(l0, l0 + <span class=y>1</span>);
-        <span class=b>build</span>(r0 - <span class=y>1</span>, r0);
-    }<br>
-    T <span class=b>query</span>(<span class=g>int</span> l, <span class=g>int</span> r) {
-        <span class=b>push</span>(l, l + <span class=y>1</span>);
-        <span class=b>push</span>(r - <span class=y>1</span>, r);
-        T res = <span class=y>0</span>;
-        <span class=y>for</span> (l += N, r += N; l &lt; r; l &gt;&gt;= <span class=y>1</span>, r &gt;&gt;= <span class=y>1</span>) {
-            <span class=y>if</span> (l&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>l++<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
-            <span class=y>if</span> (r&amp;<span class=y>1</span>) res = <span class=b>calc</span>(res, t<span class=b>[</span>--r<span class=b>]</span>, <span class=y>0</span>, <span class=y>-</span><span class=y>1</span>);
-        }
-        <span class=y>return</span> res;
     }
-};</pre>
+}</pre>
 </div></div>
                 </div>
             </div>
